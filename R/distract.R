@@ -13,12 +13,12 @@
 # before you need to turn on the browser (that may have been blocked by a productivity software)
 
 # TODO
-# save output somewhere so the user can then get the hyperlink to copy/paste
 # put links in external file
-#
 
+distractions <- new.env(parent = emptyenv())
 
 library(feedeR)
+library(clipr)
 
 # code at https://github.com/DataWookie/feedeR/blob/master/R/read.R
 # blog at https://www.r-bloggers.com/feeder-reading-rss-and-atom-feeds-from-r/
@@ -38,6 +38,7 @@ feed.extract.with.error.handling <- function(url){
     tryCatch({
         res <- feed.extract(url)
         res$status <- "OK"
+        distractions$last.feed <- res
         return(res)
     }, error = function(err){
         res <- list(status="ERR", level="Error")
@@ -59,12 +60,17 @@ top.entries <- function(url, number.of.entries = 5){
     if (parsed$status == "ERR") return("Error in parsing the feed")
     # keep only item list
     res <- data.frame(parsed$items[,1],
-                      parsed$items[,2])
-    names(res) <- c("what","when")
+                      parsed$items[,2],
+                      parsed$items[,3])
+    names(res) <- c("what","when","links")
     # sort by date/time
     res <- res[order(res[,"when"], decreasing = TRUE),]
     # limit to number of entries asked
     res <- res[1:number.of.entries,]
+    # store for future use
+    distractions$last.entries <- res
+    # keep only date and content
+    res <- res[,c("what","when")]
     # return
     return(res)
 }
@@ -91,4 +97,21 @@ distract <- function(){
     ch <- as.integer(readline(input.prompt))
     res <- top.entries(as.character(urls[ch,"url"]))
     print(res, row.names = FALSE)
+    print("Type 'links()' to get links")
+}
+
+links <- function(entry.n = NULL){
+    if (is.null(entry.n)){
+        print(distractions$last.entries)
+    } else {
+        print(distractions$last.entries[entry.n,])
+    }
+    print("Use 'copy(n) to copy hyperlink n to system clipboard")
+}
+
+copy <- function(entry.n = 1){
+    d <- distractions$last.entries[entry.n, "links"]
+    print(d)
+    print("Link copied to system clipboard")
+    write_clip(d)
 }
