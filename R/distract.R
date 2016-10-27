@@ -14,21 +14,14 @@
 
 # TODO
 # put links in external file
+# warning if save with id alreayd in
+
 
 distractions <- new.env(parent = emptyenv())
 
-library(feedeR)
-library(clipr)
-
-# code at https://github.com/DataWookie/feedeR/blob/master/R/read.R
-# blog at https://www.r-bloggers.com/feeder-reading-rss-and-atom-feeds-from-r/
-
-# Some URLs
-guardian.url <- "https://www.theguardian.com/world/rss"
-slashdot.url <- "http://rss.slashdot.org/Slashdot/slashdot"
-badscience.url <- "http://www.badscience.net/feed/"
-rbloggers.url <- "https://feeds.feedburner.com/RBloggers"
-rjobs.url <- "https://www.r-users.com/feed/?rss_featured=1"
+# library(feedeR)
+# library(clipr)
+# library(rjson)
 
 feed.extract.with.error.handling <- function(url){
     # return a list of 5 if success, otherwise a list of 1 "status:ERR"
@@ -36,7 +29,7 @@ feed.extract.with.error.handling <- function(url){
     res <- list()
     # error handling: if the rss call is not succesfull, return an error list
     tryCatch({
-        res <- feed.extract(url)
+        res <- feedeR::feed.extract(url)
         res$status <- "OK"
         distractions$last.feed <- res
         return(res)
@@ -75,29 +68,30 @@ top.entries <- function(url, number.of.entries = 5){
     return(res)
 }
 
+get.urls <- function(){
+    return(read.table("urls.txt", header = TRUE, sep = ",", stringsAsFactors = FALSE))
+}
+
 distract <- function(){
     # interactive function that ask user what he wants to see and returns a df
     # with date/time and entry title
-    urls <- data.frame(name = c("guardian",
-                                "slashdot",
-                                "bad science",
-                                "r-bloggers",
-                                "r users jobs"),
-                       url = c(guardian.url,
-                               slashdot.url,
-                               badscience.url,
-                               rbloggers.url,
-                               rjobs.url))
-    input.prompt <- paste0("Which feed you'd like to visualize:\n",
-                           "1. The Guardian\n",
-                           "2. Slashdot\n",
-                           "3. Bad Science\n",
-                           "4. R-bloggers\n",
-                           "5. R jobs\n")
+    urls <- get.urls()
+    print(urls)
+    input.prompt <- paste0("Which feed you'd like to visualize: ")
     ch <- as.integer(readline(input.prompt))
     res <- top.entries(as.character(urls[ch,"url"]))
     print(res, row.names = FALSE)
     print("Type 'links()' to get links")
+}
+
+save.rss.feed <- function(id, name, url, category){
+    x <- data.frame(id=id,name=name,url=url,category=category)
+    u <- get.urls()
+    write.feed.file(rbind(u,x))
+}
+
+write.feed.file <- function(dataframe){
+    write.table(dataframe,"urls.txt", sep = ",")
 }
 
 links <- function(entry.n = NULL){
@@ -114,4 +108,12 @@ copy <- function(entry.n = 1){
     print(d)
     print("Link copied to system clipboard")
     write_clip(d)
+}
+
+# save.rss.feed("universetoday","Universe Today","http://www.universetoday.com/feed/","space")
+
+remove.rss <- function(id){
+    urls <- get.urls()
+    new.urls <- urls[!grepl(id, urls$id),]
+    write.feed.file(new.urls)
 }
