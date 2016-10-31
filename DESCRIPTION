@@ -1,15 +1,21 @@
 Package: distract
 Type: Package
-Title: Read Favourite RSS Feeds.
+Title: Read Favourite RSS Feeds
 Version: 0.0.0.9000
 Date: 2016-10-23s
 Authors@R: person("Stefano", "Merlo", email = "trepreciso@gmail.com",
   role = c("aut", "cre"))
 Description: this to provide some functions to help you distract from
-  your focused task, but avoiding the healthy habit to walk away from the pc,
-  by providing the latest headlines before you need to turn on the browser
-  (that may have been blocked by a productivity software).
+    your focused task, but avoiding the healthy habit to walk away from the pc,
+    by providing the latest headlines before you need to turn on the browser
+    (that may have been blocked by a productivity software).
+Depends: R (>= 3.1.0)
 License: CC0
 LazyData: TRUE
-Imports: feedeR (>= 0.0.6)
-Suggests: testthat
+Imports:
+    feedeR (>= 0.0.6),
+    RCurl,
+    clipr
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
