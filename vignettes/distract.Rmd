@@ -1,0 +1,54 @@
+---
+title: "distract: "
+author: "Stefano Merlo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Motivation
+
+```{r}
+library(distract)
+```
+
+There's plenty of evidence that a productive working session must be scheduled in 'chunks'; a common chunk size is 25 minutes (see [the pomodoro techique](https://www.amazon.com/Pomodoro-Technique-Francesco-Cirillo/dp/3981567900)) but everyone can use own experience to find the best duration.
+
+This package is not about the working chunk, but the break. A good healthy habit is walk away from the computer screen to get some fresh air, or chat with colleagues to stimulate serendipity and allowing the background processes in the brain to sediment and rework ideas, finding patterns and solving problems.
+
+But what about if you don't want to walk away? What if you want to be different, to stay at your computer screen till your eyes are burning and your legs are sore?
+
+You can now `distract` within your R session: see the latest news, or new posts from your favourite blogger. What you need is just an RSS feed url.
+
+
+# Workflow
+
+There is a set of predefined 10 feed urls loaded with the package; these are author's choice, and you may want to change or add your favourites. But this is a starting point.
+
+To display current feeds available, print the dataframe `feeds`
+
+```{r, echo=TRUE}
+feeds
+```
+
+Read feeds available, and memorize your favorite's index number. Now distract with it.
+
+```{r}
+distract(1)
+```
+
+You may be interested in one title `n`. Get the corresponing link, with `links(n)`
+
+```{r}
+links(2)
+```
+
+Now, R cannot work as a browser, but you can copy the link in system clipboard and paste onto your favourite web browser, with `copy(k)`
+
+```{r}
+copy(2)
+```
+
