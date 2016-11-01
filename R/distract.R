@@ -192,6 +192,14 @@ copy <- function(entry.n = 1) {
     }
     d <- as.character(distractions$last.entries[entry.n, "links"])
     print(d)
-    clipr::write_clip(d)
-    return("Link copied to system clipboard")
+    # clipr::write_clip(d)
+    tryCatch({
+        clipr::write_clip(d)
+        return("Link copied to system clipboard")
+    }, error = function(err) {
+        return("Error: link not copied to system clipboard")
+    }, warning = function(war) {
+        return("Error: link not copied to system clipboard")
+    }, finally = {
+    })
 }
