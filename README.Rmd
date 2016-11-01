@@ -1,8 +1,18 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-distract
-========
 
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# distract
 [![Build Status](https://travis-ci.org/erpreciso/distract.svg?branch=master)](https://travis-ci.org/erpreciso/distract)
 
 Use `distract` package to distract yourself visiting your favourite news or blog feeds.
